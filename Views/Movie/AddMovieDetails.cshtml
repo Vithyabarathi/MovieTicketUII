@@ -1,0 +1,82 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div>
+    <form>
+        <table>
+            <tr>
+                <td><label>Id</label></td>
+                <td>:</td>
+                <td><input id="txtId" type="text" /></td>
+            </tr>
+            <tr>
+                <td><label>MovieName</label></td>
+                <td>:</td>
+                <td><input id="txtMovieName" type="text" /></td>
+            </tr>
+            <tr>
+                <td><label>Descriptions</label></td>
+                <td>:</td>
+                <td><input id="txtDescription" type="text" /></td>
+            </tr>
+            <tr>
+                <td><label>MovieType</label></td>
+                <td>:</td>
+                <td><input id="txtMovietype" type="text" /></td>
+            </tr>
+            <tr>
+                <td><label>Languages</label></td>
+                <td>:</td>
+                <td><input id="txtLanguages" type="text" /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td><input id="btnSubmit" type="button" value="Submit" /></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnSubmit").click(function () {
+            var movie = new Object();
+            movie.id = $('#txtId').val();
+            movie.movieName = $('#txtMovieName').val();
+            movie.descriptions = $('#txtDescription').val();
+            movie.movieType = $('#txtMovietype').val();
+            movie.languages = $('#txtLanguages').val();
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:3879/api/MovieAPI/InsertMovieDetails",
+                crossDomain: true,
+                data: JSON.stringify(movie),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    alert('Saved Successfully');
+                    console.log(movie);
+                },
+                failure: function (response) {
+                    debugger;
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    debugger;
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+
+
+            

@@ -1,0 +1,197 @@
+﻿<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+<style>
+    .add {
+        float: right;
+        margin-right: 50px;
+    }
+</style>
+
+
+
+<h1>Movie List</h1>
+<a asp-controller="Movie" asp-action="AddMovieDetails">
+    <input id="btnAdd" type="button" value="Add" class="add btn btn-primary" /></a>
+
+
+<br />
+<br />
+<br />
+<div class="container-fluid">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>MovieName</th>
+                <th>Descriptions</th>
+                <th>MovieType</th>
+                <th>Languages</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody id="Moviedata">
+        </tbody>
+    </table>
+</div>
+<div id="editdiv" style="margin-left:auto;margin-right:auto">
+    <form>
+        <table>
+            <tr>
+                <td><label>Id</label></td>
+                <td>:</td>
+                <td><input id="txtId" type="text" /></td>
+            </tr>
+            <tr>
+                <td><label>MovieName</label></td>
+                <td>:</td>
+                <td><input id="txtMovieName" type="text" /></td>
+            </tr>
+            <tr>
+                <td><label>Descriptions</label></td>
+                <td>:</td>
+                <td><input id="txtDescription" type="text" /></td>
+            </tr>
+            <tr>
+                <td><label>MovieType</label></td>
+                <td>:</td>
+                <td><input id="txtMovietype" type="text" /></td>
+            </tr>
+            <tr>
+                <td><label>Languages</label></td>
+                <td>:</td>
+                <td><input id="txtLanguages" type="text" /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td><input id="btnSubmit" class="btn btn-secondary" type="button" value="Update" onclick="EditMovieTicketData()" /></td>
+            </tr>
+        </table>
+        </form>
+        </div>
+<br /><br /><br />
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+              
+                $("#editdiv").hide("slow");
+
+                ShowMovieData();
+            });
+
+
+
+            function ShowMovieData() {
+                $("#Moviedata").empty();
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:3879/api/MovieAPI",
+                    crossDomain: true,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        var rows = "";
+                        for (var i = 0; i < response.length; i++) {
+                            rows = rows + "<tr><td>" + response[i].id + "</td><td>" + response[i].movieName + "</td><td>" + response[i].descriptions + "</td><td>" + response[i].movieType + "</td><td>" + response[i].languages + "</td><td><button id='EditMovie' class='btn btn-primary' data-id=" + response[i].id + " onclick='EditMovieData(this)'>Edit</button></td><td><button id='DeleteMovie' class='btn btn-danger' data-id=" + response[i].id + " onclick='DeleteMovieData(this)'>Delete</button></td><td></td></tr>";
+                        }
+                        $("#Moviedata").append(rows);
+                        console.log(response);
+                    },
+                    failure: function (response) {
+                        debugger;
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        debugger;
+                        alert(response.responseText);
+                    }
+                });
+            }
+            function DeleteMovieData(id1) {
+                $.ajax({
+                    type: "DELETE",
+                    url: "http://localhost:3879/api/MovieAPI/DeleteMovieDetails?Id=" + $(id1).data("id"),
+                    crossDomain: true,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        ShowMovieData();
+                    },
+                    failure: function (response) {
+                        debugger;
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        debugger;
+                        alert(response.responseText);
+                    }
+                });
+            }
+                function EditMovieTicketData() {
+
+                    var movie = new Object();
+                    movie.id = $('#txtId').val();
+                    movie.movieName = $('#txtMovieName').val();
+                    movie.descriptions = $('#txtDescription').val();
+                    movie.movieType = $('#txtMovietype').val();
+                    movie.languages = $('#txtLanguages').val();
+                    $.ajax({
+
+                        type: "PUT",
+                        url: "http://localhost:3879/api/MovieAPI/UpdateMovieDeatils",
+                        crossDomain: true,
+                        data: JSON.stringify(movie),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            alert('Updated Successfully');
+                        },
+                        failure: function (response) {
+                            debugger;
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            debugger;
+                            alert(response.responseText);
+                        }
+
+                    });
+                    $("#editdiv").hide("slow");
+                }
+
+
+                function EditMovieData(ctl) {
+                    $("#editdiv").show("slow");
+                    $.ajax({
+                        type: "GET",
+                        url: "http://localhost:3879/api/MovieAPI/GetMovieDetailsById?Id=" + $(ctl).data("id"),
+                        crossDomain: true,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            $("#txtId").val(response.id);
+                            $("#txtMovieName").val(response.movieName);
+                            $('#txtDescription').val(response.descriptions);
+                            $('#txtMovietype').val(response.movieType);
+                            $('#txtLanguages').val(response.languages);
+                        },
+                        failure: function (response) {
+                            debugger;
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            debugger;
+                            alert(response.responseText);
+                        }
+                    });
+
+                }
+
+
+        </script>
